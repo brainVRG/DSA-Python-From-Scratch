@@ -1,0 +1,138 @@
+class HashMap:
+    def key_to_index(self, key):
+        """Converts a string key into an array index by summing Unicode values and applying modulo."""
+        sum_unicode = 0
+        for c in key:
+            sum_unicode += ord(c)
+        return sum_unicode % len(self.hashmap)
+
+    # don't touch below this line
+
+    def __init__(self, size):
+        self.hashmap = [None for i in range(size)]
+
+    def __repr__(self):
+        buckets = []
+        for v in self.hashmap:
+            if v != None:
+                buckets.append(v)
+        return str(buckets)
+
+import random
+
+
+class User:
+    def __init__(self, id):
+        self.id = id
+        user_names = [
+            "Blake",
+            "Ricky",
+            "Shelley",
+            "Dave",
+            "George",
+            "John",
+            "James",
+            "Mitch",
+            "Williamson",
+            "Burry",
+            "Vennett",
+            "Shipley",
+            "Geller",
+            "Rickert",
+            "Carrell",
+            "Baum",
+            "Brownfield",
+            "Lippmann",
+            "Moses",
+        ]
+        self.user_name = f"{user_names[id % len(user_names)]}#{id}"
+
+    def __eq__(self, other):
+        return isinstance(other, User) and self.id == other.id
+
+    def __lt__(self, other):
+        return isinstance(other, User) and self.id < other.id
+
+    def __gt__(self, other):
+        return isinstance(other, User) and self.id > other.id
+
+    def __repr__(self):
+        return "".join(self.user_name)
+
+
+def get_users(num):
+    random.seed(1)
+    users = []
+    ids = []
+    for i in range(num * 3):
+        ids.append(i)
+    random.shuffle(ids)
+    ids = ids[:num]
+    for id in ids:
+        user = User(id)
+        users.append(user)
+    return users
+
+run_cases = [
+    (
+        8,
+        get_users(2),
+        [3, 6],
+    ),
+]
+
+submit_cases = run_cases + [
+    (
+        512,
+        get_users(6),
+        [360, 487, 150, 458, 112, 50],
+    ),
+]
+
+
+def test(size, users, expected_indexes):
+    print("---------------------------------")
+    print(f" * HashMap size: {size}")
+    hm = HashMap(size)
+    try:
+        actual = []
+        for i, user in enumerate(users):
+            index = hm.key_to_index(user.user_name)
+            print(f"  Expect  {user.user_name} -> {expected_indexes[i]}")
+            print(f"  Actual  {user.user_name} -> {index}")
+            actual.append(index)
+        if actual == expected_indexes:
+            print("Pass \n")
+            return True
+        print("Fail \n")
+        return False
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
+
+def main():
+    passed = 0
+    failed = 0
+    skipped = len(submit_cases) - len(test_cases)
+    for test_case in test_cases:
+        correct = test(*test_case)
+        if correct:
+            passed += 1
+        else:
+            failed += 1
+    if failed == 0:
+        print("============= PASS ==============")
+    else:
+        print("============= FAIL ==============")
+    if skipped > 0:
+        print(f"{passed} passed, {failed} failed, {skipped} skipped")
+    else:
+        print(f"{passed} passed, {failed} failed")
+
+
+test_cases = submit_cases
+if "__RUN__" in globals():
+    test_cases = run_cases
+
+main()
